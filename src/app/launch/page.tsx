@@ -262,11 +262,11 @@ export default function LaunchPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Zen-Stealth Logo/Header */}
+      {/* POL-Stealth Logo/Header */}
       <div className="absolute top-6 left-6 z-10">
         <Link href="/" className="focus:outline-none">
           <div className="bg-[#FCD119] border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] px-6 py-3 rounded-lg cursor-pointer">
-            <h1 className="text-2xl font-black text-black">Zen-Stealth</h1>
+            <h1 className="text-2xl font-black text-black">POL-Stealth</h1>
           </div>
         </Link>
       </div>

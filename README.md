@@ -1,8 +1,8 @@
-# 🕵️‍♂️ ZEN-Stealth – Private Transactions on Horizen
+# 🕵️‍♂️ POL-Stealth – Private Transactions on Horizen
 
 Experience the next evolution of blockchain privacy on the Horizen Testnet with stealth addresses and cutting-edge zero-knowledge technology.
 
-ZEN-Stealth enables private fund reception on-chain, with unlinkable payment addresses, one-time use keys, and cryptographic guarantees — paving the way for true privacy in decentralized finance.
+POL-Stealth enables private fund reception on-chain, with unlinkable payment addresses, one-time use keys, and cryptographic guarantees — paving the way for true privacy in decentralized finance.
 
 ---
 
@@ -19,7 +19,7 @@ They hide the receiver's identity on public block explorers while maintaining co
 
 ---
 
-## ⚙️ How ZEN-Stealth Works
+## ⚙️ How POL-Stealth Works
 
 1. **Generate a Stealth Address** — A unique address is derived from your public key, only usable for one transaction
 2. **Sender Encrypts Transaction Data** — Using elliptic curve Diffie-Hellman (ECDH), the sender generates a one-time address for you
@@ -86,4 +86,4 @@ This project is licensed under the MIT License — free to use, modify, and dist
 
 ---
 
-> 💡 **ZEN-Stealth is a stepping stone toward complete transactional privacy on Horizen** — ensuring confidentiality, unlinkability, and censorship resistance in the decentralized era.
+> 💡 **POL-Stealth is a stepping stone toward complete transactional privacy on Horizen** — ensuring confidentiality, unlinkability, and censorship resistance in the decentralized era.

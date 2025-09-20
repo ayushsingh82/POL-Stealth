@@ -6,8 +6,8 @@ import { motion } from 'framer-motion';
 
 const faqs = [
   {
-    q: 'What is Zen-Stealth?',
-    a: 'Zen-Stealth is a privacy protocol for private transactions on Horizen using stealth addresses and zero-knowledge cryptography.'
+    q: 'What is POL-Stealth?',
+    a: 'POL-Stealth is a privacy protocol for private transactions on Horizen using stealth addresses and zero-knowledge cryptography.'
   },
   {
     q: 'How do stealth addresses work?',
@@ -15,10 +15,10 @@ const faqs = [
   },
   {
     q: 'Is my wallet compatible?',
-    a: 'Any EVM-compatible wallet can be used with Zen-Stealth.'
+    a: 'Any EVM-compatible wallet can be used with POL-Stealth.'
   },
   {
-    q: 'Is Zen-Stealth open source?',
+    q: 'Is POL-Stealth open source?',
     a: 'Yes! The code is open source and available on GitHub.'
   },
 ];
@@ -53,7 +53,7 @@ export default function Home() {
       <div className="absolute top-6 left-6 z-10">
         <Link href="/" className="focus:outline-none">
           <div className="bg-[#FCD119] border-2 border-black shadow-[6px_6px_0_0_rgba(0,0,0,1)] px-6 py-3 rounded-lg cursor-pointer">
-            <h1 className="text-2xl font-black text-black">Zen-Stealth</h1>
+            <h1 className="text-2xl font-black text-black">POL-Stealth</h1>
           </div>
         </Link>
       </div>

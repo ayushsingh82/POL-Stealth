@@ -7,12 +7,11 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 const images: Record<string, string> = imagesJson;
 
 const CHAINS = [
-  { label: 'Sei', value: 'sei' },
+
   { label: 'Polygon', value: 'Polygon' },
 ];
 const TOKENS = [
-  { name: 'USDT', chain: 'sei', label: 'Tether (USDT)' },
-  { name: 'USDC', chain: 'sei', label: 'USD Coin (USDC)' },
+
 
   { name: 'USDT', chain: 'Polygon', label: 'Tether (USDT)' },
   { name: 'USDC', chain: 'Polygon', label: 'USD Coin (USDC)' },

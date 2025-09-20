@@ -1,6 +1,6 @@
 # 🕵️‍♂️ POL-Stealth – Private Transactions on Polygon
 
-Experience the next evolution of blockchain privacy on the Polygon Testnet with stealth addresses and cutting-edge zero-knowledge technology.
+Experience the next evolution of blockchain privacy on the Polygon  with stealth addresses and cutting-edge zero-knowledge technology.
 
 POL-Stealth enables private fund reception on-chain, with unlinkable payment addresses, one-time use keys, and cryptographic guarantees — paving the way for true privacy in decentralized finance.
 
@@ -51,7 +51,7 @@ We're just getting started — upcoming milestones will push privacy even furthe
   Both sending and receiving addresses will be shielded from public view using zk-SNARKs or ring signatures
 
 - 🪙 **Private Token Standard on Polygon**  
-  Launching a privacy-enabled ZEN token that can be transferred without revealing balances or participant addresses
+  Launching a privacy-enabled POL token that can be transferred without revealing balances or participant addresses
 
 - 💱 **Private DEX Trades**  
   Enable swap transactions where trade details and wallet addresses remain confidential

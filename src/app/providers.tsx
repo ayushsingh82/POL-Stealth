@@ -12,30 +12,30 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-// Horizen Testnet configuration
-const horizenTestnet = {
+// Polygon Testnet configuration
+const PolygonTestnet = {
   id: 845320009,
-  name: 'Horizen Testnet',
-  network: 'horizen-testnet',
+  name: 'Polygon Testnet',
+  network: 'Polygon-testnet',
   nativeCurrency: {
     decimals: 18,
     name: 'ETH',
     symbol: 'ETH',
   },
   rpcUrls: {
-    public: { http: ['https://horizen-rpc-testnet.appchain.base.org'] },
-    default: { http: ['https://horizen-rpc-testnet.appchain.base.org'] },
+    public: { http: ['https://Polygon-rpc-testnet.appchain.base.org'] },
+    default: { http: ['https://Polygon-rpc-testnet.appchain.base.org'] },
   },
   blockExplorers: {
-    default: { name: 'Horizen Explorer', url: 'https://horizen-explorer-testnet.appchain.base.org/' },
+    default: { name: 'Polygon Explorer', url: 'https://Polygon-explorer-testnet.appchain.base.org/' },
   },
   testnet: true,
 } as const;
 
 const config = getDefaultConfig({
-  appName: 'Private Send - Horizen',
+  appName: 'Private Send - Polygon',
   projectId: 'c4f79cc821944d9680842e34466bfbd9', // Using a demo project ID - replace with your own
-  chains: [horizenTestnet],
+  chains: [PolygonTestnet],
   ssr: true,
 });
 
@@ -47,7 +47,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
           locale="en-US"
-          initialChain={horizenTestnet}
+          initialChain={PolygonTestnet}
         >
           {children}
         </RainbowKitProvider>

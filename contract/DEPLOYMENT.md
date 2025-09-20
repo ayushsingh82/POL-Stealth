@@ -1,12 +1,12 @@
 # TokenTransfer Contract Deployment Guide
 
-This guide explains how to deploy the TokenTransfer contract to the Horizen testnet.
+This guide explains how to deploy the TokenTransfer contract to the Polygon testnet.
 
 ## Prerequisites
 
 1. **Node.js and npm** installed
 2. **Private key** for deployment (with testnet ETH)
-3. **Hardhat** configured for Horizen testnet
+3. **Hardhat** configured for Polygon testnet
 
 ## Setup
 
@@ -25,10 +25,10 @@ This guide explains how to deploy the TokenTransfer contract to the Horizen test
 
 ## Deployment
 
-### Deploy to Horizen Testnet
+### Deploy to Polygon Testnet
 
 ```bash
-npx hardhat run scripts/deployTransfer.ts --network horizenTestnet
+npx hardhat run scripts/deployTransfer.ts --network PolygonTestnet
 ```
 
 ### Deploy to Local Network (for testing)
@@ -70,9 +70,9 @@ The TokenTransfer contract provides the following functions:
    ```
 
 2. **Verify deployment:**
-   Check the contract on the Horizen explorer:
+   Check the contract on the Polygon explorer:
    ```
-   https://horizen-explorer-testnet.appchain.base.org/address/[CONTRACT_ADDRESS]
+   https://Polygon-explorer-testnet.appchain.base.org/address/[CONTRACT_ADDRESS]
    ```
 
 ## Usage Example
@@ -82,7 +82,7 @@ import { ethers } from 'ethers';
 import { contractConfig } from './src/config/contract';
 
 // Connect to contract
-const provider = new ethers.JsonRpcProvider('https://horizen-rpc-testnet.appchain.base.org');
+const provider = new ethers.JsonRpcProvider('https://Polygon-rpc-testnet.appchain.base.org');
 const signer = new ethers.Wallet(PRIVATE_KEY, provider);
 const contract = new ethers.Contract(contractConfig.address, contractConfig.abi, signer);
 
@@ -97,10 +97,10 @@ await contract.transferToken(tokenAddress, recipient, amount);
 ## Network Configuration
 
 The contract is configured for:
-- **Network:** Horizen Testnet
+- **Network:** Polygon Testnet
 - **Chain ID:** 845320009
-- **RPC URL:** https://horizen-rpc-testnet.appchain.base.org
-- **Explorer:** https://horizen-explorer-testnet.appchain.base.org
+- **RPC URL:** https://Polygon-rpc-testnet.appchain.base.org
+- **Explorer:** https://Polygon-explorer-testnet.appchain.base.org
 
 ## Troubleshooting
 
@@ -121,6 +121,6 @@ The contract is configured for:
 ### Getting Testnet ETH
 
 To get testnet ETH for deployment, you may need to:
-1. Check Horizen documentation for faucet information
-2. Contact the Horizen team for testnet tokens
-3. Use the official Horizen testnet faucet if available 
+1. Check Polygon documentation for faucet information
+2. Contact the Polygon team for testnet tokens
+3. Use the official Polygon testnet faucet if available 

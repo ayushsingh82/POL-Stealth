@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 const faqs = [
   {
     q: 'What is POL-Stealth?',
-    a: 'POL-Stealth is a privacy protocol for private transactions on Horizen using stealth addresses and zero-knowledge cryptography.'
+    a: 'POL-Stealth is a privacy protocol for private transactions on Polygon using stealth addresses and zero-knowledge cryptography.'
   },
   {
     q: 'How do stealth addresses work?',
@@ -69,7 +69,7 @@ export default function Home() {
               <h3 className="text-6xl font-bold font-black text-black italic mb-1">
                 PRIVATE Transaction
               </h3>
-              <h2 className="text-6xl font-black mb-4 text-[#FCD119] bg-black px-3 py-2 rounded-lg inline-block italic">on Horizen</h2>
+              <h2 className="text-6xl font-black mb-4 text-[#FCD119] bg-black px-3 py-2 rounded-lg inline-block italic">on Polygon</h2>
             </div>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default function Home() {
           {/* Our Zero-Knowledge Edge */}
           <div className="col-span-12 md:col-span-6 row-span-2 bg-[#FCD119] border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl flex flex-col justify-center">
             <h2 className="text-xl font-black mb-4 text-white bg-black px-3 py-2 rounded-lg inline-block">Our Zero-Knowledge Edge</h2>
-            <p className="text-sm text-black mb-4 leading-relaxed">Harness Horizen's advanced zero-knowledge proof technology for:</p>
+            <p className="text-sm text-black mb-4 leading-relaxed">Harness Polygon's advanced zero-knowledge proof technology for:</p>
             <ul className="space-y-2 text-sm">
               <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Absolute transaction privacy</span></li>
               <li className="flex items-center"><span className="w-2 h-2 rounded-full mr-3 bg-black"></span><span className="text-black font-semibold">Cutting-edge cryptographic security</span></li>
@@ -118,7 +118,7 @@ export default function Home() {
           {/* The Future of Private Transactions */}
           <div className="col-span-12 md:col-span-4 row-span-1 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl flex flex-col justify-center">
             <h3 className="text-lg font-black mb-2 text-[#FCD119] bg-black px-3 py-1 rounded-lg inline-block">The Future of Private Transactions</h3>
-            <p className="text-black text-sm mt-2">We’re building the next generation of blockchain privacy. Horizen’s zero-knowledge proofs and advanced cryptography deliver truly anonymous transactions.</p>
+            <p className="text-black text-sm mt-2">We’re building the next generation of blockchain privacy. Polygon’s zero-knowledge proofs and advanced cryptography deliver truly anonymous transactions.</p>
           </div>
           {/* Advanced Privacy */}
           <div className="col-span-12 md:col-span-4 row-span-1 bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] p-8 rounded-2xl flex flex-col justify-center">

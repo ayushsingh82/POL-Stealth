@@ -15,7 +15,7 @@ async function runFluidWithInput() {
         console.log('📝 Input Parameters:');
         console.log(`Recipient Address: ${RECIPIENT_ADDRESS}`);
         console.log(`Amount: ${AMOUNT} ETH`);
-        console.log(`Network: Horizen Testnet (Chain ID: 845320009)`);
+        console.log(`Network: Polygon Testnet (Chain ID: 845320009)`);
 
         // Create a mock signer for demonstration
         const mockSigner = {
@@ -46,7 +46,7 @@ async function runFluidWithInput() {
         console.log(`To: ${stealthAddress}`);
         console.log(`Original Recipient: ${RECIPIENT_ADDRESS}`);
         console.log(`Amount: ${AMOUNT} ETH`);
-        console.log(`Network: Horizen Testnet (Chain ID: 845320009)`);
+        console.log(`Network: Polygon Testnet (Chain ID: 845320009)`);
 
         console.log('\n🔍 Address Validation:');
         console.log('=====================');

@@ -1,7 +1,7 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  console.log("🚀 Deploying StealthTransfer contract to Horizen testnet...");
+  console.log("🚀 Deploying StealthTransfer contract to Polygon testnet...");
 
   // Get the contract factory
   const StealthTransfer = await ethers.getContractFactory("StealthTransfer");
@@ -16,9 +16,9 @@ async function main() {
   
   console.log("✅ StealthTransfer deployed successfully!");
   console.log("Contract Address:", contractAddress);
-  console.log("Network: Horizen Testnet");
+  console.log("Network: Polygon Testnet");
   console.log("Chain ID: 845320009");
-  console.log("Explorer: https://horizen-explorer-testnet.appchain.base.org/address/" + contractAddress);
+  console.log("Explorer: https://Polygon-explorer-testnet.appchain.base.org/address/" + contractAddress);
   
   // Verify deployment
   console.log("\n🔍 Verifying deployment...");

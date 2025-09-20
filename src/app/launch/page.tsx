@@ -74,7 +74,7 @@ export default function LaunchPage() {
 
   // Generate stealth address when wallet connects
   useEffect(() => {
-    if (isConnected && userAddress && chainId === 845320009) { // Horizen testnet chain ID
+    if (isConnected && userAddress && chainId === 845320009) { // Polygon testnet chain ID
       generateStealthAddress();
     }
   }, [isConnected, userAddress, chainId]);
@@ -279,7 +279,7 @@ export default function LaunchPage() {
             <h3 className="text-4xl font-bold font-black text-black italic mb-1">
                 Stealth Account
               </h3>
-              <h2 className="text-lg font-black mb-4 text-[#FCD119] bg-black px-3 py-2 rounded-lg inline-block italic">on Horizen</h2>
+              <h2 className="text-lg font-black mb-4 text-[#FCD119] bg-black px-3 py-2 rounded-lg inline-block italic">on Polygon</h2>
             </div>
           </div>
 
@@ -351,12 +351,12 @@ export default function LaunchPage() {
             {isConnected ? (
               <div className="space-y-4">
                 <div className="text-center p-2 bg-black text-white rounded text-xs">
-                  Chain ID: {chainId} {chainId === 845320009 ? '✓ Horizen Testnet' : '⚠️ Wrong Network'}
+                  Chain ID: {chainId} {chainId === 845320009 ? '✓ Polygon Testnet' : '⚠️ Wrong Network'}
                 </div>
                 
                 {chainId !== 845320009 ? (
                   <div className="text-center">
-                    <p className="text-sm text-red-600 font-bold">Please switch to Horizen Testnet</p>
+                    <p className="text-sm text-red-600 font-bold">Please switch to Polygon Testnet</p>
                     <p className="text-xs text-black">Chain ID: 845320009</p>
                   </div>
                 ) : isGeneratingStealth ? (
@@ -570,12 +570,12 @@ export default function LaunchPage() {
                   Transaction Hash: {hash}
                 </p>
                 <a 
-                  href={`https://horizen-explorer-testnet.appchain.base.org/tx/${hash}`}
+                  href={`https://Polygon-explorer-testnet.appchain.base.org/tx/${hash}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-blue-600 hover:text-blue-800 underline"
                 >
-                  🔍 View on Horizen Explorer
+                  🔍 View on Polygon Explorer
                 </a>
               </div>
             )}

@@ -1,6 +1,6 @@
-# 🕵️‍♂️ POL-Stealth – Private Transactions on Horizen
+# 🕵️‍♂️ POL-Stealth – Private Transactions on Polygon
 
-Experience the next evolution of blockchain privacy on the Horizen Testnet with stealth addresses and cutting-edge zero-knowledge technology.
+Experience the next evolution of blockchain privacy on the Polygon Testnet with stealth addresses and cutting-edge zero-knowledge technology.
 
 POL-Stealth enables private fund reception on-chain, with unlinkable payment addresses, one-time use keys, and cryptographic guarantees — paving the way for true privacy in decentralized finance.
 
@@ -37,16 +37,9 @@ They hide the receiver's identity on public block explorers while maintaining co
 - 🏷️ **View Tags** — Efficient fund scanning for receivers
 - 🧠 **Ephemeral Keys** — Temporary cryptographic keys for every payment
 - 🧮 **SECP256k1 Cryptography** — Proven, secure, and widely adopted standard
-- 🧪 **Horizen Testnet Integration** — Full EVM compatibility on chain ID 845320009
 
----
 
-## 🧪 Network Info
 
-- **Chain**: Horizen Testnet
-- **Chain ID**: `845320009`
-- **Standard**: ERC-5564 Stealth Addresses
-- **Tech Stack**: FluidKey Account Kit + Zero-Knowledge Infrastructure
 
 ---
 
@@ -57,7 +50,7 @@ We're just getting started — upcoming milestones will push privacy even furthe
 - 🔁 **Full Sender & Receiver Privacy**  
   Both sending and receiving addresses will be shielded from public view using zk-SNARKs or ring signatures
 
-- 🪙 **Private Token Standard on Horizen**  
+- 🪙 **Private Token Standard on Polygon**  
   Launching a privacy-enabled ZEN token that can be transferred without revealing balances or participant addresses
 
 - 💱 **Private DEX Trades**  
@@ -74,7 +67,7 @@ We're just getting started — upcoming milestones will push privacy even furthe
 ## 🛠️ Built With
 
 - **FluidKey Account Kit** — ERC-5564 stealth address generation
-- **Horizen EVM** — Privacy-friendly smart contract execution  
+- **Polygon EVM** — Privacy-friendly smart contract execution  
 - **SECP256k1 Cryptography** — Secure elliptic curve encryption
 - **Zero-Knowledge Proof Systems** — Future upgrade path for full transactional privacy
 
@@ -86,4 +79,4 @@ This project is licensed under the MIT License — free to use, modify, and dist
 
 ---
 
-> 💡 **POL-Stealth is a stepping stone toward complete transactional privacy on Horizen** — ensuring confidentiality, unlinkability, and censorship resistance in the decentralized era.
+> 💡 **POL-Stealth is a stepping stone toward complete transactional privacy on Polygon** — ensuring confidentiality, unlinkability, and censorship resistance in the decentralized era.

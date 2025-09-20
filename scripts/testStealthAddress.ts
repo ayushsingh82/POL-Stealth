@@ -26,7 +26,7 @@ async function testStealthAddressGeneration() {
         console.log('📝 Test Parameters:');
         console.log(`Recipient: ${recipientAddress}`);
         console.log(`Amount: ${amount} ETH`);
-        console.log(`Network: Horizen Testnet (Chain ID: 845320009)`);
+        console.log(`Network: Polygon Testnet (Chain ID: 845320009)`);
         console.log('\n⏳ Generating stealth address...');
 
         // Test 1: Generate stealth address

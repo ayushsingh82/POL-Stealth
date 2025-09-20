@@ -1,7 +1,7 @@
 // Demo stealth address generation - no fluid library imports needed
 
 // Fluidkey Parameters as per documentation
-const chainId = 845320009 // Horizen testnet chain ID
+const chainId = 845320009 // Polygon testnet chain ID
 const safeVersion = '1.3.0'
 const useDefaultAddress = true
 const threshold = 1

@@ -8,14 +8,14 @@ const images: Record<string, string> = imagesJson;
 
 const CHAINS = [
   { label: 'Sei', value: 'sei' },
-  { label: 'Horizen', value: 'horizen' },
+  { label: 'Polygon', value: 'Polygon' },
 ];
 const TOKENS = [
   { name: 'USDT', chain: 'sei', label: 'Tether (USDT)' },
   { name: 'USDC', chain: 'sei', label: 'USD Coin (USDC)' },
 
-  { name: 'USDT', chain: 'horizen', label: 'Tether (USDT)' },
-  { name: 'USDC', chain: 'horizen', label: 'USD Coin (USDC)' },
+  { name: 'USDT', chain: 'Polygon', label: 'Tether (USDT)' },
+  { name: 'USDC', chain: 'Polygon', label: 'USD Coin (USDC)' },
  
 ];
 

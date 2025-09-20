@@ -12,24 +12,24 @@ export const erc20Config = {
   abi: ERC20Abi,
 } as const;
 
-// Horizen testnet configuration
-export const horizenConfig = {
+// Polygon testnet configuration
+export const PolygonConfig = {
   chainId: 845320009,
-  name: "Horizen Testnet",
-  network: "horizen-testnet",
+  name: "Polygon Testnet",
+  network: "Polygon-testnet",
   nativeCurrency: {
     decimals: 18,
     name: "ETH",
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: ["https://horizen-rpc-testnet.appchain.base.org"] },
-    default: { http: ["https://horizen-rpc-testnet.appchain.base.org"] },
+    public: { http: ["https://Polygon-rpc-testnet.appchain.base.org"] },
+    default: { http: ["https://Polygon-rpc-testnet.appchain.base.org"] },
   },
   blockExplorers: {
     default: { 
-      name: "Horizen Explorer", 
-      url: "https://horizen-explorer-testnet.appchain.base.org/" 
+      name: "Polygon Explorer", 
+      url: "https://Polygon-explorer-testnet.appchain.base.org/" 
     },
   },
   testnet: true,

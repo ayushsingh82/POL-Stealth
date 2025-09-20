@@ -6,7 +6,7 @@
 
 // /**
 //  * @title StealthTransfer
-//  * @dev Contract for handling stealth transfers on Horizen network
+//  * @dev Contract for handling stealth transfers on Polygon network
 //  */
 // contract StealthTransfer is ReentrancyGuard, Ownable {
     

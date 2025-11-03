@@ -18,7 +18,7 @@ const TOKENS = [
  
 ];
 
-export function Fns() {
+export function Fns({ showHistory, setShowHistory }: { showHistory: boolean; setShowHistory: (show: boolean) => void }) {
   const [step, setStep] = useState(1);
   const [walletType, setWalletType] = useState<'personal' | 'merchant' | null>(null);
   const [selectedChain, setSelectedChain] = useState('');
@@ -145,71 +145,6 @@ export function Fns() {
                 </span>
               </div>
             </div>
-            {/* History Box */}
-            <div className="mb-6">
-              <div className="text-black font-bold text-lg mb-3">History</div>
-              <div className="border-2 border-black border-r-4 border-b-4 rounded-xl p-4 bg-white">
-                <div className="space-y-3 max-h-64 overflow-y-auto">
-                  {/* Sample Transactions */}
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-green-600 font-bold">↓</span>
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-black">Received</div>
-                        <div className="text-xs text-gray-600 font-mono">0x742d...d8b2</div>
-                        <div className="text-xs text-gray-500">2 hours ago</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-bold text-green-600">+100 USDC</div>
-                      <div className="text-xs text-gray-500">Private</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                        <span className="text-red-600 font-bold">↑</span>
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-black">Sent</div>
-                        <div className="text-xs text-gray-600 font-mono">0x809c...dad62</div>
-                        <div className="text-xs text-gray-500">1 day ago</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-bold text-red-600">-50 USDC</div>
-                      <div className="text-xs text-gray-500">Private</div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-green-600 font-bold">↓</span>
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-black">Received</div>
-                        <div className="text-xs text-gray-600 font-mono">0x3a1f...9e4c</div>
-                        <div className="text-xs text-gray-500">3 days ago</div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-bold text-green-600">+250 USDC</div>
-                      <div className="text-xs text-gray-500">Private</div>
-                    </div>
-                  </div>
-                  
-                  {/* Empty state when no transactions */}
-                  <div className="text-center py-4 text-gray-500 text-sm">
-                    No more transactions to display
-                  </div>
-                </div>
-              </div>
-            </div>
-            
             <div className="text-black font-bold text-lg mb-4">Do you want to Pay or Receive?</div>
             <div className="flex gap-8 justify-center mb-4">
               <button
@@ -342,6 +277,81 @@ export function Fns() {
           Next
         </button>
       </div>
+      
+      {/* History Modal */}
+      {showHistory && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border-2 border-black border-r-8 border-b-8 rounded-3xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold text-black">Transaction History</h2>
+              <button
+                onClick={() => setShowHistory(false)}
+                className="text-black hover:text-gray-600 text-2xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+            <div className="space-y-3">
+              {/* Sample Transactions */}
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 font-bold">↓</span>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-black">Received</div>
+                    <div className="text-xs text-gray-600 font-mono">0x742d...d8b2</div>
+                    <div className="text-xs text-gray-500">2 hours ago</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-bold text-green-600">+100 USDC</div>
+                  <div className="text-xs text-gray-500">Private</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                    <span className="text-red-600 font-bold">↑</span>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-black">Sent</div>
+                    <div className="text-xs text-gray-600 font-mono">0x809c...dad62</div>
+                    <div className="text-xs text-gray-500">1 day ago</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-bold text-red-600">-50 USDC</div>
+                  <div className="text-xs text-gray-500">Private</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 font-bold">↓</span>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-black">Received</div>
+                    <div className="text-xs text-gray-600 font-mono">0x3a1f...9e4c</div>
+                    <div className="text-xs text-gray-500">3 days ago</div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-bold text-green-600">+250 USDC</div>
+                  <div className="text-xs text-gray-500">Private</div>
+                </div>
+              </div>
+              
+              {/* Empty state when no transactions */}
+              <div className="text-center py-4 text-gray-500 text-sm">
+                No more transactions to display
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { BackgroundBeams } from '../../components/ui/background-beams';
 import imagesJson from './images.json';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount } from 'wagmi';
 const images: Record<string, string> = imagesJson;
 
 const CHAINS = [
@@ -18,7 +19,8 @@ const TOKENS = [
  
 ];
 
-export function Fns({ showHistory, setShowHistory }: { showHistory: boolean; setShowHistory: (show: boolean) => void }) {
+export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalletModal }: { showHistory: boolean; setShowHistory: (show: boolean) => void; showWalletModal?: boolean; setShowWalletModal?: (show: boolean) => void }) {
+  const { isConnected } = useAccount();
   const [step, setStep] = useState(1);
   const [walletType, setWalletType] = useState<'personal' | 'merchant' | null>(null);
   const [selectedChain, setSelectedChain] = useState('');
@@ -67,8 +69,105 @@ export function Fns({ showHistory, setShowHistory }: { showHistory: boolean; set
 
   return (
     <div className="w-full flex flex-col items-center">
-      {/* Heading and subtitle OUTSIDE the box */}
-      {step === 1 && (
+      {/* History Screen */}
+      {showHistory ? (
+        <div className="w-full max-w-md bg-white/90 border-2 border-black border-r-8 border-b-8 rounded-3xl p-10 backdrop-blur-sm mt-12">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-black">Transaction History</h2>
+            <button
+              onClick={() => setShowHistory(false)}
+              className="bg-white border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] px-4 py-2 rounded-lg cursor-pointer text-base font-bold text-black hover:bg-[#FCD119] hover:shadow-[2px_2px_0_0_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all duration-200"
+            >
+              Back
+            </button>
+          </div>
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+            {/* Sample Transactions */}
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+              <div className="flex items-center gap-3 flex-1">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <span className="text-green-600 font-bold">↓</span>
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-black">Received</div>
+                  <div className="text-xs text-gray-600 font-mono">0x742d...d8b2</div>
+                  <div className="text-xs text-gray-500">2 hours ago</div>
+                </div>
+              </div>
+              <div className="text-right ml-2">
+                <div className="text-sm font-bold text-green-600">+100 USDC</div>
+                <div className="text-xs text-gray-500">Private</div>
+                <a 
+                  href={`https://Polygon-explorer-testnet.appchain.base.org/address/0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b2`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-blue-600 hover:text-blue-800 underline mt-1 block"
+                >
+                  View on Explorer
+                </a>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+              <div className="flex items-center gap-3 flex-1">
+                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                  <span className="text-red-600 font-bold">↑</span>
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-black">Sent</div>
+                  <div className="text-xs text-gray-600 font-mono">0x809c...dad62</div>
+                  <div className="text-xs text-gray-500">1 day ago</div>
+                </div>
+              </div>
+              <div className="text-right ml-2">
+                <div className="text-sm font-bold text-red-600">-50 USDC</div>
+                <div className="text-xs text-gray-500">Private</div>
+                <a 
+                  href={`https://Polygon-explorer-testnet.appchain.base.org/address/0x809cccfc6a780d68d136b52dced63ed1f14dad62`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-blue-600 hover:text-blue-800 underline mt-1 block"
+                >
+                  View on Explorer
+                </a>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+              <div className="flex items-center gap-3 flex-1">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <span className="text-green-600 font-bold">↓</span>
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-black">Received</div>
+                  <div className="text-xs text-gray-600 font-mono">0x3a1f...9e4c</div>
+                  <div className="text-xs text-gray-500">3 days ago</div>
+                </div>
+              </div>
+              <div className="text-right ml-2">
+                <div className="text-sm font-bold text-green-600">+250 USDC</div>
+                <div className="text-xs text-gray-500">Private</div>
+                <a 
+                  href={`https://Polygon-explorer-testnet.appchain.base.org/address/0x3a1f5b8c9d4e2f6a7b9c0d1e2f3a4b5c6d7e8f9a`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-blue-600 hover:text-blue-800 underline mt-1 block"
+                >
+                  View on Explorer
+                </a>
+              </div>
+            </div>
+            
+            {/* Empty state when no transactions */}
+            <div className="text-center py-4 text-gray-500 text-sm">
+              No more transactions to display
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Heading and subtitle OUTSIDE the box */}
+          {step === 1 && (
         <div className="mb-6 text-center">
           <h2 className="text-3xl font-extrabold mb-2 mt-6 text-black tracking-tight">Create Account</h2>
           <p className="text-base text-gray-700">Set up your wallet to get started</p>
@@ -257,100 +356,29 @@ export function Fns({ showHistory, setShowHistory }: { showHistory: boolean; set
           )}
         </div>
       )}
-      {/* Navigation Buttons OUTSIDE the box, centered */}
-      <div className="flex gap-6 mt-8 w-full max-w-md justify-center">
-        <button
-          className="px-8 py-3 rounded-xl border-2 border-black font-bold text-lg bg-white text-black hover:bg-[#FCD119] hover:text-black transition disabled:opacity-50 shadow-md"
-          disabled={step === 1}
-          onClick={() => setStep(step - 1)}
-        >
-          Back
-        </button>
-        <button
-          className="px-8 py-3 rounded-xl border-2 border-black font-bold text-lg bg-black text-white hover:bg-[#FCD119] hover:text-black transition disabled:opacity-50 shadow-md"
-          disabled={step === 1 ? !canNextStep1 : step === 2 ? !canNextStep2 : false}
-          onClick={() => {
-            if (step === 1 && canNextStep1) setStep(2);
-            else if (step === 2 && canNextStep2) setStep(3);
-          }}
-        >
-          Next
-        </button>
-      </div>
-      
-      {/* History Modal */}
-      {showHistory && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-black border-r-8 border-b-8 rounded-3xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-black">Transaction History</h2>
-              <button
-                onClick={() => setShowHistory(false)}
-                className="text-black hover:text-gray-600 text-2xl font-bold"
-              >
-                ×
-              </button>
-            </div>
-            <div className="space-y-3">
-              {/* Sample Transactions */}
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <span className="text-green-600 font-bold">↓</span>
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-black">Received</div>
-                    <div className="text-xs text-gray-600 font-mono">0x742d...d8b2</div>
-                    <div className="text-xs text-gray-500">2 hours ago</div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-bold text-green-600">+100 USDC</div>
-                  <div className="text-xs text-gray-500">Private</div>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                    <span className="text-red-600 font-bold">↑</span>
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-black">Sent</div>
-                    <div className="text-xs text-gray-600 font-mono">0x809c...dad62</div>
-                    <div className="text-xs text-gray-500">1 day ago</div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-bold text-red-600">-50 USDC</div>
-                  <div className="text-xs text-gray-500">Private</div>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <span className="text-green-600 font-bold">↓</span>
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-black">Received</div>
-                    <div className="text-xs text-gray-600 font-mono">0x3a1f...9e4c</div>
-                    <div className="text-xs text-gray-500">3 days ago</div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-sm font-bold text-green-600">+250 USDC</div>
-                  <div className="text-xs text-gray-500">Private</div>
-                </div>
-              </div>
-              
-              {/* Empty state when no transactions */}
-              <div className="text-center py-4 text-gray-500 text-sm">
-                No more transactions to display
-              </div>
-            </div>
-          </div>
+      {/* Navigation Buttons OUTSIDE the box, centered - only show when not in history */}
+      {!showHistory && (
+        <div className="flex gap-6 mt-8 w-full max-w-md justify-center">
+          <button
+            className="px-8 py-3 rounded-xl border-2 border-black font-bold text-lg bg-white text-black hover:bg-[#FCD119] hover:text-black transition disabled:opacity-50 shadow-md"
+            disabled={step === 1}
+            onClick={() => setStep(step - 1)}
+          >
+            Back
+          </button>
+          <button
+            className="px-8 py-3 rounded-xl border-2 border-black font-bold text-lg bg-black text-white hover:bg-[#FCD119] hover:text-black transition disabled:opacity-50 shadow-md"
+            disabled={step === 1 ? !canNextStep1 : step === 2 ? !canNextStep2 : false}
+            onClick={() => {
+              if (step === 1 && canNextStep1) setStep(2);
+              else if (step === 2 && canNextStep2) setStep(3);
+            }}
+          >
+            Next
+          </button>
         </div>
+      )}
+        </>
       )}
     </div>
   );

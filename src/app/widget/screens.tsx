@@ -16,6 +16,7 @@ const TOKENS = [
 
   { name: 'USDT', chain: 'Polygon', label: 'Tether (USDT)' },
   { name: 'USDC', chain: 'Polygon', label: 'USD Coin (USDC)' },
+  { name: 'POL', chain: 'Polygon', label: 'Polygon (POL)' },
  
 ];
 

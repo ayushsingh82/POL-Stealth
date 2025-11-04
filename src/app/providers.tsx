@@ -6,6 +6,7 @@ import {
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
 import { WagmiProvider } from 'wagmi';
+import { polygonAmoy } from 'viem/chains';
 
 import {
   QueryClientProvider,
@@ -13,29 +14,29 @@ import {
 } from "@tanstack/react-query";
 
 // Polygon Testnet configuration
-const PolygonTestnet = {
-  id: 845320009,
-  name: 'Polygon Testnet',
-  network: 'Polygon-testnet',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'ETH',
-    symbol: 'ETH',
-  },
-  rpcUrls: {
-    public: { http: ['https://Polygon-rpc-testnet.appchain.base.org'] },
-    default: { http: ['https://Polygon-rpc-testnet.appchain.base.org'] },
-  },
-  blockExplorers: {
-    default: { name: 'Polygon Explorer', url: 'https://Polygon-explorer-testnet.appchain.base.org/' },
-  },
-  testnet: true,
-} as const;
+// const PolygonTestnet = {
+//   id: 80002,
+//   name: 'AMoy Testnet',
+//   network: 'AMoy Testnet',
+//   nativeCurrency: {
+//     decimals: 18,
+//     name: 'POL',
+//       symbol: 'ETH',
+//   },
+//   rpcUrls: {
+//     public: { http: ['rpc-amoy.polygon.technology'] },
+//     default: { http: ['rpc-amoy.polygon.technology'] },
+//   },
+//   blockExplorers: {
+//     default: { name: 'Polygon Explorer', url: 'amoy.polygonscan.com' },
+//   },
+//   testnet: true,
+// } as const;
 
 const config = getDefaultConfig({
   appName: 'Private Send - Polygon',
   projectId: 'c4f79cc821944d9680842e34466bfbd9', // Using a demo project ID - replace with your own
-  chains: [PolygonTestnet],
+  chains: [ polygonAmoy],
   ssr: true,
 });
 
@@ -47,7 +48,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
           locale="en-US"
-          initialChain={PolygonTestnet}
+          initialChain={polygonAmoy}
         >
           {children}
         </RainbowKitProvider>

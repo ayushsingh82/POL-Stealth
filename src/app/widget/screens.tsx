@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { BackgroundBeams } from '../../components/ui/background-beams';
 import imagesJson from './images.json';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount } from 'wagmi';
+import { useAccount, useWalletClient } from 'wagmi';
+import { parseEther, isAddress } from 'viem';
 const images: Record<string, string> = imagesJson;
 
 const CHAINS = [
@@ -22,6 +23,7 @@ const TOKENS = [
 
 export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalletModal }: { showHistory: boolean; setShowHistory: (show: boolean) => void; showWalletModal?: boolean; setShowWalletModal?: (show: boolean) => void }) {
   const { address, isConnected } = useAccount();
+  const { data: walletClient } = useWalletClient();
   const [step, setStep] = useState(1);
   const [walletType, setWalletType] = useState<'personal' | 'merchant' | null>(null);
   const [selectedChain, setSelectedChain] = useState('');
@@ -29,6 +31,11 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
   const [payOrReceive, setPayOrReceive] = useState<'pay' | 'receive' | null>(null);
   const [stealthAddress, setStealthAddress] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [recipientAddress, setRecipientAddress] = useState('');
+  const [amount, setAmount] = useState('');
+  const [isSendingTransaction, setIsSendingTransaction] = useState(false);
+  const [transactionStatus, setTransactionStatus] = useState<string>('');
+  const [transactionHash, setTransactionHash] = useState<string>('');
 
   // Button requirements
   const canNextStep1 = !!walletType;
@@ -65,6 +72,62 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
       setStealthAddress('Error generating address');
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  // Handle send transaction
+  const handleSendTransaction = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!isConnected || !walletClient || !address) {
+      setTransactionStatus('Please connect your wallet first');
+      return;
+    }
+
+    if (!recipientAddress || !amount) {
+      setTransactionStatus('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      setIsSendingTransaction(true);
+      setTransactionStatus('Validating transaction...');
+
+      // Validate address
+      if (!isAddress(recipientAddress)) {
+        throw new Error('Invalid recipient address');
+      }
+
+      // Validate amount
+      const amountNum = parseFloat(amount);
+      if (isNaN(amountNum) || amountNum <= 0) {
+        throw new Error('Invalid amount');
+      }
+
+      // Convert amount to wei (POL is native token, so we use value)
+      const value = parseEther(amount);
+
+      setTransactionStatus('Sending transaction... Please confirm in your wallet');
+
+      // Send transaction using viem walletClient
+      const hash = await walletClient.sendTransaction({
+        account: address,
+        to: recipientAddress as `0x${string}`,
+        value
+      });
+
+      setTransactionHash(hash);
+      setTransactionStatus(`✅ Transaction sent! Hash: ${hash}`);
+      
+      // Reset form
+      setRecipientAddress('');
+      setAmount('');
+
+    } catch (error) {
+      console.error('Transaction error:', error);
+      setTransactionStatus(`❌ Transaction failed: ${(error as Error).message}`);
+    } finally {
+      setIsSendingTransaction(false);
     }
   };
 
@@ -275,18 +338,60 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
               </button>
             </div>
             {payOrReceive === 'pay' && (
-              <div className="flex flex-col gap-4 mt-4 w-full">
+              <form onSubmit={handleSendTransaction} className="flex flex-col gap-4 mt-4 w-full">
                 <input
                   type="text"
                   placeholder="Recipient Address"
+                  value={recipientAddress}
+                  onChange={(e) => setRecipientAddress(e.target.value)}
                   className="w-full p-3 border-2 border-black rounded-xl text-lg bg-white text-black font-semibold focus:ring-2 focus:ring-[#FCD119] focus:border-[#FCD119] outline-none"
+                  disabled={isSendingTransaction}
                 />
                 <input
                   type="number"
                   placeholder="Amount"
+                  step="any"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
                   className="w-full p-3 border-2 border-black rounded-xl text-lg bg-white text-black font-semibold focus:ring-2 focus:ring-[#FCD119] focus:border-[#FCD119] outline-none"
+                  disabled={isSendingTransaction}
                 />
-              </div>
+                <button
+                  type="submit"
+                  disabled={isSendingTransaction || !recipientAddress || !amount}
+                  className="w-full px-6 py-3 rounded-xl border-2 border-black font-bold text-lg bg-[#FCD119] text-black hover:bg-black hover:text-[#FCD119] transition disabled:opacity-50 shadow-md flex items-center justify-center gap-2"
+                >
+                  {isSendingTransaction ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                      Sending Transaction...
+                    </>
+                  ) : (
+                    'Send Transaction'
+                  )}
+                </button>
+                {transactionStatus && (
+                  <div className={`p-3 rounded-lg border-2 ${
+                    transactionStatus.includes('✅') 
+                      ? 'bg-green-50 border-green-200 text-green-800' 
+                      : transactionStatus.includes('❌')
+                      ? 'bg-red-50 border-red-200 text-red-800'
+                      : 'bg-blue-50 border-blue-200 text-blue-800'
+                  }`}>
+                    <div className="text-sm font-semibold">{transactionStatus}</div>
+                    {transactionHash && (
+                      <a
+                        href={`https://amoy.polygonscan.com/tx/${transactionHash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-blue-600 hover:text-blue-800 underline mt-1 block"
+                      >
+                        View on PolygonScan →
+                      </a>
+                    )}
+                  </div>
+                )}
+              </form>
             )}
             {payOrReceive === 'receive' && (
               <div className="mt-4 w-full">

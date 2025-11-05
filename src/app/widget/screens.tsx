@@ -21,7 +21,7 @@ const TOKENS = [
 ];
 
 export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalletModal }: { showHistory: boolean; setShowHistory: (show: boolean) => void; showWalletModal?: boolean; setShowWalletModal?: (show: boolean) => void }) {
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const [step, setStep] = useState(1);
   const [walletType, setWalletType] = useState<'personal' | 'merchant' | null>(null);
   const [selectedChain, setSelectedChain] = useState('');
@@ -82,6 +82,20 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
               Back
             </button>
           </div>
+          {isConnected && address && (
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+              <div className="text-sm font-semibold text-black mb-2">Connected Wallet</div>
+              <div className="text-xs text-gray-600 font-mono mb-2">{address}</div>
+              <a 
+                href={`https://amoy.polygonscan.com/address/${address}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-blue-600 hover:text-blue-800 underline"
+              >
+                View on PolygonScan →
+              </a>
+            </div>
+          )}
           <div className="space-y-3 max-h-[60vh] overflow-y-auto">
             {/* Sample Transactions */}
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border-2 border-gray-200">

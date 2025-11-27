@@ -37,6 +37,11 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
   const [transactionStatus, setTransactionStatus] = useState<string>('');
   const [transactionHash, setTransactionHash] = useState<string>('');
   
+  // Batch transaction state for teams
+  const [selectedTeamMembers, setSelectedTeamMembers] = useState<string[]>([]);
+  const [batchAmount, setBatchAmount] = useState('');
+  const [isBatchMode, setIsBatchMode] = useState(false);
+  
   // Team management state
   type TeamMemberRole = 'admin' | 'member' | 'viewer';
   interface TeamMember {
@@ -66,6 +71,13 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
       }]);
     }
   }, [walletType, address]);
+
+  // Auto-set to pay mode for teams
+  useEffect(() => {
+    if (walletType === 'merchant' && step === 3) {
+      setPayOrReceive('pay');
+    }
+  }, [walletType, step]);
 
   // Generate stealth address function
   const generateStealthAddress = async () => {
@@ -145,6 +157,71 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
     setTeamMembers(teamMembers.map(m => 
       m.id === memberId ? { ...m, role: newRole } : m
     ));
+  };
+
+  // Handle batch transaction for teams
+  const handleBatchTransaction = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!isConnected || !walletClient || !address) {
+      setTransactionStatus('Please connect your wallet first');
+      return;
+    }
+
+    if (selectedTeamMembers.length === 0 || !batchAmount) {
+      setTransactionStatus('Please select at least one team member and enter amount');
+      return;
+    }
+
+    try {
+      setIsSendingTransaction(true);
+      setTransactionStatus('Validating batch transaction...');
+
+      // Validate amount
+      const amountNum = parseFloat(batchAmount);
+      if (isNaN(amountNum) || amountNum <= 0) {
+        throw new Error('Invalid amount');
+      }
+
+      // Convert amount to wei
+      const value = parseEther(batchAmount);
+      const totalValue = value * BigInt(selectedTeamMembers.length);
+
+      setTransactionStatus(`Sending ${selectedTeamMembers.length} transaction(s)... Please confirm in your wallet`);
+
+      // Send transactions to all selected members
+      const hashes: string[] = [];
+      for (const memberAddress of selectedTeamMembers) {
+        const hash = await walletClient.sendTransaction({
+          account: address,
+          to: memberAddress as `0x${string}`,
+          value
+        });
+        hashes.push(hash);
+      }
+
+      setTransactionHash(hashes[0]); // Show first hash
+      setTransactionStatus(`✅ Batch transaction sent! ${selectedTeamMembers.length} transaction(s) completed. Hash: ${hashes[0]}`);
+      
+      // Reset form
+      setSelectedTeamMembers([]);
+      setBatchAmount('');
+
+    } catch (error) {
+      console.error('Batch transaction error:', error);
+      setTransactionStatus(`❌ Batch transaction failed: ${(error as Error).message}`);
+    } finally {
+      setIsSendingTransaction(false);
+    }
+  };
+
+  // Toggle team member selection for batch
+  const toggleTeamMemberSelection = (memberAddress: string) => {
+    if (selectedTeamMembers.includes(memberAddress)) {
+      setSelectedTeamMembers(selectedTeamMembers.filter(addr => addr !== memberAddress));
+    } else {
+      setSelectedTeamMembers([...selectedTeamMembers, memberAddress]);
+    }
   };
 
   // Handle send transaction
@@ -321,6 +398,12 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
         <div className="mb-6 text-center">
           <h2 className="text-3xl font-extrabold mb-2 mt-6 text-black tracking-tight">Create Account</h2>
           <p className="text-base text-gray-700">Set up your wallet to get started</p>
+        </div>
+      )}
+      {step === 4 && walletType === 'merchant' && (
+        <div className="mb-6 text-center">
+          <h2 className="text-3xl font-extrabold mb-2 mt-6 text-black tracking-tight">Team Setup</h2>
+          <p className="text-base text-gray-700">Add team members and manage access levels</p>
         </div>
       )}
       {step === 2 ? (
@@ -565,7 +648,7 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
                     <span className={`px-2 py-1 text-xs rounded font-semibold ${
                       member.role === 'admin' ? 'bg-purple-100 text-purple-700' :
                       member.role === 'member' ? 'bg-blue-100 text-blue-700' :
-                      'bg-gray-100 text-gray-700'
+                      'bg-gray-100 text-black'
                     }`}>
                       {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
                     </span>

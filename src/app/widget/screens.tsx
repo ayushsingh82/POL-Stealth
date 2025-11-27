@@ -36,10 +36,36 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
   const [isSendingTransaction, setIsSendingTransaction] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState<string>('');
   const [transactionHash, setTransactionHash] = useState<string>('');
+  
+  // Team management state
+  type TeamMemberRole = 'admin' | 'member' | 'viewer';
+  interface TeamMember {
+    id: string;
+    address: string;
+    role: TeamMemberRole;
+    name: string;
+  }
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [showAddMember, setShowAddMember] = useState(false);
+  const [newMemberAddress, setNewMemberAddress] = useState('');
+  const [newMemberName, setNewMemberName] = useState('');
+  const [newMemberRole, setNewMemberRole] = useState<TeamMemberRole>('member');
 
   // Button requirements
   const canNextStep1 = !!walletType;
   const canNextStep2 = !!selectedChain && !!selectedToken;
+  
+  // Initialize current user as admin if team mode
+  React.useEffect(() => {
+    if (walletType === 'merchant' && address && teamMembers.length === 0) {
+      setTeamMembers([{
+        id: '1',
+        address: address,
+        role: 'admin',
+        name: 'You'
+      }]);
+    }
+  }, [walletType, address]);
 
   // Generate stealth address function
   const generateStealthAddress = async () => {
@@ -73,6 +99,52 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  // Team management functions
+  const handleAddTeamMember = () => {
+    if (!newMemberAddress || !isAddress(newMemberAddress)) {
+      alert('Please enter a valid wallet address');
+      return;
+    }
+    
+    if (teamMembers.some(m => m.address.toLowerCase() === newMemberAddress.toLowerCase())) {
+      alert('This wallet address is already added to the team');
+      return;
+    }
+
+    const newMember: TeamMember = {
+      id: Date.now().toString(),
+      address: newMemberAddress,
+      role: newMemberRole,
+      name: newMemberName || `Member ${teamMembers.length}`
+    };
+
+    setTeamMembers([...teamMembers, newMember]);
+    setNewMemberAddress('');
+    setNewMemberName('');
+    setNewMemberRole('member');
+    setShowAddMember(false);
+  };
+
+  const handleRemoveTeamMember = (memberId: string) => {
+    if (teamMembers.find(m => m.id === memberId)?.role === 'admin' && 
+        teamMembers.filter(m => m.role === 'admin').length === 1) {
+      alert('Cannot remove the last admin');
+      return;
+    }
+    setTeamMembers(teamMembers.filter(m => m.id !== memberId));
+  };
+
+  const handleUpdateMemberRole = (memberId: string, newRole: TeamMemberRole) => {
+    if (teamMembers.find(m => m.id === memberId)?.role === 'admin' && 
+        teamMembers.filter(m => m.role === 'admin').length === 1 && newRole !== 'admin') {
+      alert('Cannot remove the last admin');
+      return;
+    }
+    setTeamMembers(teamMembers.map(m => 
+      m.id === memberId ? { ...m, role: newRole } : m
+    ));
   };
 
   // Handle send transaction

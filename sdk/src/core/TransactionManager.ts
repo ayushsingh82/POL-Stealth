@@ -32,7 +32,8 @@ export class TransactionManager {
       const hash = await this.walletClient.sendTransaction({
         account: config.account as `0x${string}`,
         to: config.to as `0x${string}`,
-        value: config.value
+        value: config.value,
+        chain: this.walletClient.chain || undefined
       });
 
       return {

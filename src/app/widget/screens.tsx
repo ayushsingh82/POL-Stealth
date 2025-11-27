@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from 'framer-motion';
 import { BackgroundBeams } from '../../components/ui/background-beams';
 import imagesJson from './images.json';
@@ -56,7 +56,7 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
   const canNextStep2 = !!selectedChain && !!selectedToken;
   
   // Initialize current user as admin if team mode
-  React.useEffect(() => {
+  useEffect(() => {
     if (walletType === 'merchant' && address && teamMembers.length === 0) {
       setTeamMembers([{
         id: '1',
@@ -523,6 +523,140 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
             )}
           </div>
         </div>
+      ) : step === 4 && walletType === 'merchant' ? (
+        <div className="w-full min-h-[60vh] flex flex-col justify-center items-center mt-8">
+          <div className="w-full max-w-md bg-white/90 border-2 border-black border-r-8 border-b-8 rounded-3xl p-10 backdrop-blur-sm">
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-black mb-2">Team Management</h2>
+              <p className="text-sm text-gray-600">Manage your team members and their access levels</p>
+            </div>
+
+            {/* Team Members List */}
+            <div className="space-y-3 mb-6 max-h-[400px] overflow-y-auto">
+              {teamMembers.map((member) => (
+                <div key={member.id} className="p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex-1">
+                      <div className="font-semibold text-black">{member.name}</div>
+                      <div className="text-xs text-gray-600 font-mono">{member.address.slice(0, 6)}...{member.address.slice(-4)}</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={member.role}
+                        onChange={(e) => handleUpdateMemberRole(member.id, e.target.value as TeamMemberRole)}
+                        className="px-3 py-1 text-xs border-2 border-black rounded-lg bg-white font-semibold"
+                        disabled={member.role === 'admin' && teamMembers.filter(m => m.role === 'admin').length === 1}
+                      >
+                        <option value="admin">Admin</option>
+                        <option value="member">Member</option>
+                        <option value="viewer">Viewer</option>
+                      </select>
+                      {!(member.role === 'admin' && teamMembers.filter(m => m.role === 'admin').length === 1) && (
+                        <button
+                          onClick={() => handleRemoveTeamMember(member.id)}
+                          className="px-3 py-1 text-xs bg-red-500 text-white rounded-lg hover:bg-red-600 transition font-semibold"
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className={`px-2 py-1 text-xs rounded font-semibold ${
+                      member.role === 'admin' ? 'bg-purple-100 text-purple-700' :
+                      member.role === 'member' ? 'bg-blue-100 text-blue-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {member.role.charAt(0).toUpperCase() + member.role.slice(1)}
+                    </span>
+                    <a
+                      href={`https://amoy.polygonscan.com/address/${member.address}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-blue-600 hover:text-blue-800 underline"
+                    >
+                      View on PolygonScan →
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Add Member Form */}
+            {showAddMember ? (
+              <div className="p-4 bg-[#FCD119]/10 border-2 border-[#FCD119] rounded-xl mb-4">
+                <div className="mb-4">
+                  <label className="block mb-2 text-sm font-semibold text-black">Member Name</label>
+                  <input
+                    type="text"
+                    placeholder="Enter member name"
+                    value={newMemberName}
+                    onChange={(e) => setNewMemberName(e.target.value)}
+                    className="w-full p-2 border-2 border-black rounded-lg text-sm bg-white text-black font-semibold focus:ring-2 focus:ring-[#FCD119] focus:border-[#FCD119] outline-none"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block mb-2 text-sm font-semibold text-black">Wallet Address</label>
+                  <input
+                    type="text"
+                    placeholder="0x..."
+                    value={newMemberAddress}
+                    onChange={(e) => setNewMemberAddress(e.target.value)}
+                    className="w-full p-2 border-2 border-black rounded-lg text-sm bg-white text-black font-mono font-semibold focus:ring-2 focus:ring-[#FCD119] focus:border-[#FCD119] outline-none"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block mb-2 text-sm font-semibold text-black">Role</label>
+                  <select
+                    value={newMemberRole}
+                    onChange={(e) => setNewMemberRole(e.target.value as TeamMemberRole)}
+                    className="w-full p-2 border-2 border-black rounded-lg text-sm bg-white text-black font-semibold focus:ring-2 focus:ring-[#FCD119] focus:border-[#FCD119] outline-none"
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="member">Member</option>
+                    <option value="viewer">Viewer</option>
+                  </select>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleAddTeamMember}
+                    className="flex-1 px-4 py-2 bg-[#FCD119] text-black rounded-lg border-2 border-black font-bold hover:bg-black hover:text-[#FCD119] transition"
+                  >
+                    Add Member
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowAddMember(false);
+                      setNewMemberAddress('');
+                      setNewMemberName('');
+                      setNewMemberRole('member');
+                    }}
+                    className="px-4 py-2 bg-white text-black rounded-lg border-2 border-black font-bold hover:bg-gray-100 transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowAddMember(true)}
+                className="w-full px-6 py-3 rounded-xl border-2 border-black font-bold text-lg bg-[#FCD119] text-black hover:bg-black hover:text-[#FCD119] transition shadow-md"
+              >
+                + Add Team Member
+              </button>
+            )}
+
+            {/* Role Permissions Info */}
+            <div className="mt-6 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
+              <div className="text-sm font-semibold text-black mb-2">Role Permissions:</div>
+              <div className="text-xs text-gray-700 space-y-1">
+                <div><strong>Admin:</strong> Full access - can add/remove members, send transactions, manage settings</div>
+                <div><strong>Member:</strong> Can send transactions and view team activity</div>
+                <div><strong>Viewer:</strong> Read-only access - can view transactions and team activity</div>
+              </div>
+            </div>
+          </div>
+        </div>
       ) : (
         <div className="w-full max-w-md bg-white/90 border-2 border-black border-r-8 border-b-8 rounded-3xl p-10 mt-0 md:mt-4 backdrop-blur-sm">
           {step === 1 && (
@@ -560,10 +694,18 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
           </button>
           <button
             className="px-8 py-3 rounded-xl border-2 border-black font-bold text-lg bg-black text-white hover:bg-[#FCD119] hover:text-black transition disabled:opacity-50 shadow-md"
-            disabled={step === 1 ? !canNextStep1 : step === 2 ? !canNextStep2 : false}
+            disabled={step === 1 ? !canNextStep1 : step === 2 ? !canNextStep2 : step === 4 ? teamMembers.length === 0 : false}
             onClick={() => {
               if (step === 1 && canNextStep1) setStep(2);
-              else if (step === 2 && canNextStep2) setStep(3);
+              else if (step === 2 && canNextStep2) {
+                if (walletType === 'merchant') {
+                  setStep(4); // Go to team management for merchant
+                } else {
+                  setStep(3); // Go to pay/receive for personal
+                }
+              } else if (step === 4 && walletType === 'merchant') {
+                setStep(3); // Go to pay/receive after team setup
+              }
             }}
           >
             Next

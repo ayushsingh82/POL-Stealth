@@ -477,22 +477,179 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
                 </span>
               </div>
             </div>
-            <div className="text-black font-bold text-lg mb-4">Do you want to Pay or Receive?</div>
-            <div className="flex gap-8 justify-center mb-4">
-              <button
-                className={`px-8 py-3 rounded-xl border-2 border-black font-bold text-lg bg-[#FCD119] text-black hover:bg-black hover:text-[#FCD119] transition ${payOrReceive === 'pay' ? 'ring-2 ring-[#FCD119]' : ''}`}
-                onClick={() => setPayOrReceive('pay')}
-              >
-                Pay
-              </button>
-              <button
-                className={`px-8 py-3 rounded-xl border-2 border-black font-bold text-lg bg-black text-white hover:bg-[#FCD119] hover:text-black transition ${payOrReceive === 'receive' ? 'ring-2 ring-[#FCD119]' : ''}`}
-                onClick={() => setPayOrReceive('receive')}
-              >
-                Receive
-              </button>
-            </div>
-            {payOrReceive === 'pay' && (
+            {walletType === 'merchant' ? (
+              // Team mode - only batch transactions
+              <div className="mt-4 w-full">
+                <div className="text-black font-bold text-lg mb-4">Send to Team Members</div>
+                <div className="mb-4 flex gap-2">
+                  <button
+                    onClick={() => setIsBatchMode(!isBatchMode)}
+                    className={`px-4 py-2 rounded-lg border-2 border-black font-semibold text-sm ${
+                      isBatchMode ? 'bg-[#FCD119] text-black' : 'bg-white text-black hover:bg-gray-100'
+                    }`}
+                  >
+                    {isBatchMode ? 'Single Transaction' : 'Batch Transaction'}
+                  </button>
+                </div>
+
+                {isBatchMode ? (
+                  // Batch transaction form
+                  <form onSubmit={handleBatchTransaction} className="flex flex-col gap-4">
+                    <div className="p-4 bg-gray-50 rounded-lg border-2 border-gray-200 max-h-[200px] overflow-y-auto">
+                      <div className="text-sm font-semibold text-black mb-3">Select Team Members:</div>
+                      {teamMembers.filter(m => m.address.toLowerCase() !== address?.toLowerCase()).map((member) => (
+                        <label key={member.id} className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={selectedTeamMembers.includes(member.address)}
+                            onChange={() => toggleTeamMemberSelection(member.address)}
+                            className="w-4 h-4 border-2 border-black rounded"
+                          />
+                          <div className="flex-1">
+                            <div className="text-sm font-semibold text-black">{member.name}</div>
+                            <div className="text-xs text-gray-600 font-mono">{member.address.slice(0, 6)}...{member.address.slice(-4)}</div>
+                          </div>
+                        </label>
+                      ))}
+                      {teamMembers.filter(m => m.address.toLowerCase() !== address?.toLowerCase()).length === 0 && (
+                        <div className="text-sm text-gray-500 text-center py-4">No team members to send to. Add members in team setup.</div>
+                      )}
+                    </div>
+                    <input
+                      type="number"
+                      placeholder="Amount per member (POL)"
+                      step="any"
+                      value={batchAmount}
+                      onChange={(e) => setBatchAmount(e.target.value)}
+                      className="w-full p-3 border-2 border-black rounded-xl text-lg bg-white text-black font-semibold focus:ring-2 focus:ring-[#FCD119] focus:border-[#FCD119] outline-none"
+                      disabled={isSendingTransaction}
+                    />
+                    {selectedTeamMembers.length > 0 && batchAmount && (
+                      <div className="text-sm text-gray-700 p-2 bg-blue-50 rounded border-2 border-blue-200">
+                        Total: {selectedTeamMembers.length} × {batchAmount} POL = {(parseFloat(batchAmount || '0') * selectedTeamMembers.length).toFixed(4)} POL
+                      </div>
+                    )}
+                    <button
+                      type="submit"
+                      disabled={isSendingTransaction || selectedTeamMembers.length === 0 || !batchAmount}
+                      className="w-full px-6 py-3 rounded-xl border-2 border-black font-bold text-lg bg-[#FCD119] text-black hover:bg-black hover:text-[#FCD119] transition disabled:opacity-50 shadow-md flex items-center justify-center gap-2"
+                    >
+                      {isSendingTransaction ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                          Sending Batch Transaction...
+                        </>
+                      ) : (
+                        `Send to ${selectedTeamMembers.length} Member(s)`
+                      )}
+                    </button>
+                    {transactionStatus && (
+                      <div className={`p-3 rounded-lg border-2 ${
+                        transactionStatus.includes('✅') 
+                          ? 'bg-green-50 border-green-200 text-green-800' 
+                          : transactionStatus.includes('❌')
+                          ? 'bg-red-50 border-red-200 text-red-800'
+                          : 'bg-blue-50 border-blue-200 text-blue-800'
+                      }`}>
+                        <div className="text-sm font-semibold">{transactionStatus}</div>
+                        {transactionHash && (
+                          <a
+                            href={`https://amoy.polygonscan.com/tx/${transactionHash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:text-blue-800 underline mt-1 block"
+                          >
+                            View on PolygonScan →
+                          </a>
+                        )}
+                      </div>
+                    )}
+                  </form>
+                ) : (
+                  // Single transaction form for teams
+                  <form onSubmit={handleSendTransaction} className="flex flex-col gap-4">
+                    <div className="mb-2">
+                      <label className="block mb-2 text-sm font-semibold text-black">Select Team Member:</label>
+                      <select
+                        value={recipientAddress}
+                        onChange={(e) => setRecipientAddress(e.target.value)}
+                        className="w-full p-3 border-2 border-black rounded-xl text-lg bg-white text-black font-semibold focus:ring-2 focus:ring-[#FCD119] focus:border-[#FCD119] outline-none"
+                        disabled={isSendingTransaction}
+                      >
+                        <option value="">Select a team member</option>
+                        {teamMembers.filter(m => m.address.toLowerCase() !== address?.toLowerCase()).map((member) => (
+                          <option key={member.id} value={member.address}>
+                            {member.name} ({member.address.slice(0, 6)}...{member.address.slice(-4)})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <input
+                      type="number"
+                      placeholder="Amount (POL)"
+                      step="any"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      className="w-full p-3 border-2 border-black rounded-xl text-lg bg-white text-black font-semibold focus:ring-2 focus:ring-[#FCD119] focus:border-[#FCD119] outline-none"
+                      disabled={isSendingTransaction}
+                    />
+                    <button
+                      type="submit"
+                      disabled={isSendingTransaction || !recipientAddress || !amount}
+                      className="w-full px-6 py-3 rounded-xl border-2 border-black font-bold text-lg bg-[#FCD119] text-black hover:bg-black hover:text-[#FCD119] transition disabled:opacity-50 shadow-md flex items-center justify-center gap-2"
+                    >
+                      {isSendingTransaction ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                          Sending Transaction...
+                        </>
+                      ) : (
+                        'Send Transaction'
+                      )}
+                    </button>
+                    {transactionStatus && (
+                      <div className={`p-3 rounded-lg border-2 ${
+                        transactionStatus.includes('✅') 
+                          ? 'bg-green-50 border-green-200 text-green-800' 
+                          : transactionStatus.includes('❌')
+                          ? 'bg-red-50 border-red-200 text-red-800'
+                          : 'bg-blue-50 border-blue-200 text-blue-800'
+                      }`}>
+                        <div className="text-sm font-semibold">{transactionStatus}</div>
+                        {transactionHash && (
+                          <a
+                            href={`https://amoy.polygonscan.com/tx/${transactionHash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:text-blue-800 underline mt-1 block"
+                          >
+                            View on PolygonScan →
+                          </a>
+                        )}
+                      </div>
+                    )}
+                  </form>
+                )}
+              </div>
+            ) : (
+              // Personal mode - Pay or Receive
+              <>
+                <div className="text-black font-bold text-lg mb-4">Do you want to Pay or Receive?</div>
+                <div className="flex gap-8 justify-center mb-4">
+                  <button
+                    className={`px-8 py-3 rounded-xl border-2 border-black font-bold text-lg bg-[#FCD119] text-black hover:bg-black hover:text-[#FCD119] transition ${payOrReceive === 'pay' ? 'ring-2 ring-[#FCD119]' : ''}`}
+                    onClick={() => setPayOrReceive('pay')}
+                  >
+                    Pay
+                  </button>
+                  <button
+                    className={`px-8 py-3 rounded-xl border-2 border-black font-bold text-lg bg-black text-white hover:bg-[#FCD119] hover:text-black transition ${payOrReceive === 'receive' ? 'ring-2 ring-[#FCD119]' : ''}`}
+                    onClick={() => setPayOrReceive('receive')}
+                  >
+                    Receive
+                  </button>
+                </div>
+                {payOrReceive === 'pay' && (
               <form onSubmit={handleSendTransaction} className="flex flex-col gap-4 mt-4 w-full">
                 <input
                   type="text"
@@ -603,6 +760,8 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
                   </div>
                 )}
               </div>
+            )}
+              </>
             )}
           </div>
         </div>

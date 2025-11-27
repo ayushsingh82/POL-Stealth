@@ -633,7 +633,7 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
               </div>
             ) : (
               // Personal mode - Pay or Receive
-              <>
+              <div>
                 <div className="text-black font-bold text-lg mb-4">Do you want to Pay or Receive?</div>
                 <div className="flex gap-8 justify-center mb-4">
                   <button
@@ -761,7 +761,7 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
                 )}
               </div>
             )}
-              </>
+              </div>
             )}
           </div>
         </div>

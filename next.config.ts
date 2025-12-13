@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['@rainbow-me/rainbowkit', 'wagmi', '@tanstack/react-query'],
   },
-  // Webpack configuration for better compatibility
+  // Use webpack instead of Turbopack for better compatibility
+  // Turbopack can be enabled later when dependencies are compatible
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {

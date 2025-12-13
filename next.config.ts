@@ -19,6 +19,8 @@ const nextConfig: NextConfig = {
     }
     return config;
   },
+  // Empty turbopack config to silence the warning when using webpack
+  turbopack: {},
 };
 
 export default nextConfig;

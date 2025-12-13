@@ -64,8 +64,10 @@ function generateQRCodeSVG(
   data: string,
   size: number,
   margin: number,
-  color: { dark: string; light: string }
+  color: { dark?: string; light?: string }
 ): string {
+  const darkColor = color.dark || '#000000';
+  const lightColor = color.light || '#FFFFFF';
   // This is a placeholder - in production, use qrcode library
   // For now, return a simple encoded data URL
   const encoded = encodeURIComponent(data);
@@ -74,11 +76,11 @@ function generateQRCodeSVG(
   // To use actual QR codes, install: npm install qrcode @types/qrcode
   return `data:image/svg+xml,${encodeURIComponent(`
     <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="${size}" height="${size}" fill="${color.light}"/>
-      <text x="50%" y="50%" text-anchor="middle" font-family="monospace" font-size="12" fill="${color.dark}">
+      <rect width="${size}" height="${size}" fill="${lightColor}"/>
+      <text x="50%" y="50%" text-anchor="middle" font-family="monospace" font-size="12" fill="${darkColor}">
         ${data.substring(0, 20)}...
       </text>
-      <text x="50%" y="60%" text-anchor="middle" font-size="10" fill="${color.dark}">
+      <text x="50%" y="60%" text-anchor="middle" font-size="10" fill="${darkColor}">
         Install qrcode library for actual QR
       </text>
     </svg>
@@ -95,6 +97,7 @@ export async function generateQRCodeWithLibrary(
 ): Promise<string> {
   try {
     // Dynamic import of qrcode library
+    // @ts-ignore - qrcode types may not be available
     const QRCode = await import('qrcode');
     
     const qrData = buildQRDataString(data);

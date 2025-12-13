@@ -43,7 +43,7 @@ export function encryptMetadata(
 
     // 3. Derive encryption key from shared secret using HKDF-like approach
     const hashedSecret = keccak256(toHex(sharedSecret.slice(1)));
-    const encryptionKey = hashedSecret.slice(0, 32); // Use first 32 bytes as key
+    const encryptionKey = `0x${hashedSecret.slice(2, 66)}` as `0x${string}`; // Use first 32 bytes (64 hex chars) as key
 
     // 4. Convert message to bytes
     const messageBytes = new TextEncoder().encode(message);
@@ -86,7 +86,7 @@ export function decryptMetadata(
 
     // 2. Derive decryption key (same as encryption key)
     const hashedSecret = keccak256(toHex(sharedSecret.slice(1)));
-    const decryptionKey = hashedSecret.slice(0, 32);
+    const decryptionKey = `0x${hashedSecret.slice(2, 66)}` as `0x${string}`; // Use first 32 bytes (64 hex chars) as key
 
     // 3. Decrypt using XOR (same operation as encryption)
     const encryptedBytes = hexToBytes(encryptedMetadata.encryptedData as `0x${string}`);

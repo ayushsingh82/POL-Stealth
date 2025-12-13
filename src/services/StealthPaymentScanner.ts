@@ -3,8 +3,9 @@
  * Scans blockchain for incoming stealth payments using view tags and announcement events
  */
 
-import { PublicClient, createPublicClient, http, parseAbiItem } from 'viem';
+import { PublicClient, createPublicClient, http, parseAbiItem, keccak256, toHex, hexToBytes } from 'viem';
 import { polygonAmoy } from 'viem/chains';
+import * as secp from '@noble/secp256k1';
 import { ERC5564StealthAddressGenerator } from '../erc5564/StealthAddressGenerator';
 import type { StealthMetaAddress } from '../erc5564/StealthAddressGenerator';
 
@@ -56,7 +57,7 @@ export class StealthPaymentScanner {
     });
 
     this.generator = new ERC5564StealthAddressGenerator();
-    this.lastScannedBlock = config.startBlock || 0n;
+    this.lastScannedBlock = config.startBlock || BigInt(0);
   }
 
   /**
@@ -72,19 +73,14 @@ export class StealthPaymentScanner {
     ephemeralPubKey: `0x${string}`
   ): boolean {
     try {
-      // Compute shared secret
-      const sharedSecret = this.generator['computeSharedSecret']?.(
-        viewingPrivateKey,
-        ephemeralPubKey
+      // Compute shared secret using secp256k1
+      const sharedSecret = secp.getSharedSecret(
+        viewingPrivateKey.slice(2),
+        ephemeralPubKey.slice(2),
+        false
       );
 
-      if (!sharedSecret) {
-        // Fallback to full check
-        return true; // Let full check decide
-      }
-
       // Hash and extract view tag
-      const { keccak256, toHex } = require('viem');
       const hashedSecret = keccak256(toHex(sharedSecret.slice(1)));
       const computedViewTag = `0x${hashedSecret.slice(2, 4)}` as `0x${string}`;
 
@@ -158,12 +154,12 @@ export class StealthPaymentScanner {
             // Check balance of stealth address
             const balance = await this.client.getBalance({ address: stealthAddress });
 
-            if (balance > 0n) {
+            if (balance > BigInt(0)) {
               payments.push({
                 stealthAddress,
                 ephemeralPubKey,
                 viewTag,
-                blockNumber: log.blockNumber || 0n,
+                blockNumber: log.blockNumber || BigInt(0),
                 transactionHash: log.transactionHash || '0x',
                 amount: balance,
                 metadata

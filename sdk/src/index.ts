@@ -10,6 +10,39 @@ export * from './types';
 export * from './utils/address';
 export * from './utils/amount';
 
+// Export new services (these will be available when imported from main app)
+export type {
+  StealthPayment,
+  ScanningConfig,
+  ScanResult
+} from '../../src/services/StealthPaymentScanner';
+
+export type {
+  PaymentHistoryEntry,
+  PaymentHistoryFilter
+} from '../../src/services/PaymentHistoryManager';
+
+export type {
+  WebhookConfig,
+  WebhookPayload
+} from '../../src/services/WebhookNotifier';
+
+export type {
+  TeamMemberStealthKeys,
+  TeamStealthAddress,
+  TeamStealthAddressPoolConfig
+} from '../../src/services/TeamStealthAddressPool';
+
+export type {
+  EncryptedMetadata,
+  TransactionMemo
+} from '../../src/utils/metadataEncryption';
+
+export type {
+  QRCodeOptions,
+  StealthAddressQRData
+} from '../../src/utils/qrCodeGenerator';
+
 import { TeamManager } from './core/TeamManager';
 import { TransactionManager } from './core/TransactionManager';
 import { SDKConfig } from './types';

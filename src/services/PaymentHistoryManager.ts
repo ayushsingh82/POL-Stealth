@@ -52,7 +52,7 @@ export class PaymentHistoryManager {
       userWalletAddress,
       ephemeralPubKey: payment.ephemeralPubKey,
       viewTag: payment.viewTag,
-      amount: payment.amount || 0n,
+      amount: payment.amount || BigInt(0),
       tokenAddress: payment.tokenAddress,
       transactionHash: payment.transactionHash,
       blockNumber: payment.blockNumber,
@@ -172,7 +172,7 @@ export class PaymentHistoryManager {
   } {
     const payments = this.getPaymentsForWallet(walletAddress);
 
-    let totalAmount = 0n;
+    let totalAmount = BigInt(0);
     let pendingCount = 0;
     let claimedCount = 0;
     let failedCount = 0;

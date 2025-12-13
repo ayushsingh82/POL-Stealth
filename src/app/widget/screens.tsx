@@ -744,10 +744,31 @@ export function Fns({ showHistory, setShowHistory, showWalletModal, setShowWalle
                         📋 Copy Address
                       </button>
                       <button
-                        onClick={() => {
-                          const qrText = `ethereum:${stealthAddress}`;
-                          // In a real implementation, you'd generate a QR code here
-                          alert('QR Code feature coming soon!');
+                        onClick={async () => {
+                          try {
+                            const { generateStealthAddressQR } = await import('../../utils/qrCodeGenerator');
+                            const qrDataURL = generateStealthAddressQR({
+                              stealthAddress: stealthAddress as `0x${string}`,
+                              chainId: 80002 // Polygon Amoy
+                            });
+                            
+                            // Open QR code in new window or show modal
+                            const newWindow = window.open();
+                            if (newWindow) {
+                              newWindow.document.write(`
+                                <html>
+                                  <head><title>Stealth Address QR Code</title></head>
+                                  <body style="display:flex;justify-content:center;align-items:center;height:100vh;margin:0;">
+                                    <img src="${qrDataURL}" alt="QR Code" style="max-width:90%;max-height:90%;" />
+                                    <p style="position:absolute;bottom:20px;font-family:monospace;">${stealthAddress}</p>
+                                  </body>
+                                </html>
+                              `);
+                            }
+                          } catch (error) {
+                            console.error('Error generating QR code:', error);
+                            alert('Error generating QR code. Please try again.');
+                          }
                         }}
                         className="px-3 py-2 text-xs bg-[#FCD119] text-black rounded-lg hover:bg-yellow-400 transition font-semibold"
                       >

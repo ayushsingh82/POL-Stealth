@@ -73,6 +73,13 @@ We're just getting started — upcoming milestones will push privacy even furthe
 
 ---
 
+## 📍 Deployment & production
+
+- **[DEPLOYMENT_ADDRESSES.md](./DEPLOYMENT_ADDRESSES.md)** — Contract addresses (TokenTransfer, ERC-5564 Announcer, ERC-6538 Registry) and networks. The scanner uses the deployed ERC-5564 Announcer so it is not “zero contract addresses.”
+- **[PRODUCTION_RAIL.md](./PRODUCTION_RAIL.md)** — Sender/receiver tooling (New Workflow, Widget, Scan, background scanner) and wallet adoption (MetaMask, Rabby, ephemeral key derivation) needed for production.
+
+---
+
 ## 📜 License
 
 This project is licensed under the MIT License — free to use, modify, and distribute.

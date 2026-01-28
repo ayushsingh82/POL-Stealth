@@ -8,6 +8,7 @@ import { polygonAmoy } from 'viem/chains';
 import * as secp from '@noble/secp256k1';
 import { ERC5564StealthAddressGenerator } from '../erc5564/StealthAddressGenerator';
 import type { StealthMetaAddress } from '../erc5564/StealthAddressGenerator';
+import { getERC5564AnnouncerAddress } from '../config/stealthContracts';
 
 export interface StealthPayment {
   stealthAddress: `0x${string}`;
@@ -111,14 +112,15 @@ export class StealthPaymentScanner {
 
       console.log(`Scanning blocks ${startBlock} to ${actualEndBlock}...`);
 
-      // Get ERC-5564 announcement events
+      // Get ERC-5564 announcement events from deployed announcer when available
+      const announcerAddress = getERC5564AnnouncerAddress(this.config.chainId ?? 80002);
       const announcementEvent = parseAbiItem(
         'event Announcement(uint256 indexed schemeId, address indexed stealthAddress, address indexed caller, bytes ephemeralPubKey, bytes metadata)'
       );
 
-      // Fetch announcement events
+      // Fetch announcement events (use ERC-5564 Announcer contract when deployed on this chain)
       const logs = await this.client.getLogs({
-        address: undefined, // Scan all contracts (in production, use ERC-5564 registry)
+        address: announcerAddress, // Deployed ERC-5564 Announcer; undefined falls back to scanning all contracts
         event: announcementEvent,
         fromBlock: startBlock,
         toBlock: actualEndBlock

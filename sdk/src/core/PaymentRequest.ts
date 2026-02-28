@@ -1,10 +1,7 @@
 /**
  * Payment Request (receiver-initiated) flow
- * Build shareable payment links and QR for "Request POL"
+ * Build shareable payment links for "Request POL". For QR, use app's generateStealthAddressQR or pass getQRDataUrl.
  */
-
-import type { StealthAddressQRData } from '../../../src/utils/qrCodeGenerator';
-import { generateStealthAddressQR } from '../../../src/utils/qrCodeGenerator';
 
 export interface PaymentRequestOptions {
   /** Stealth address to receive payment */
@@ -15,6 +12,8 @@ export interface PaymentRequestOptions {
   baseUrl: string;
   /** Path to pay page (default: /pay) */
   payPath?: string;
+  /** Optional: return a data URL for QR (e.g. from app's generateStealthAddressQR) */
+  getQRDataUrl?: (stealthAddress: string, amount?: string) => string;
 }
 
 export interface PaymentRequestResult {
@@ -22,35 +21,22 @@ export interface PaymentRequestResult {
   stealthAddress: string;
   /** Full URL to open: baseUrl/pay?to=0x...&amount=... */
   paymentLink: string;
-  /** Data URL for QR image (encode payment link so scanner opens pay page) */
-  qrDataUrl: string;
+  /** Data URL for QR if getQRDataUrl was provided */
+  qrDataUrl?: string;
 }
 
 /**
- * Build payment request link and QR for the Request flow.
- * Receiver generates a stealth address, then calls this to get a shareable link and QR.
+ * Build payment request link (and optionally QR) for the Request flow.
+ * Receiver generates a stealth address, then calls this to get a shareable link.
  */
 export function buildPaymentRequest(options: PaymentRequestOptions): PaymentRequestResult {
-  const { stealthAddress, amount, baseUrl, payPath = '/pay' } = options;
-  const params = new URLSearchParams({ to: stealthAddress });
-  if (amount != null && amount.trim() !== '' && !Number.isNaN(parseFloat(amount))) {
-    params.set('amount', amount.trim());
+  const { stealthAddress, amount, baseUrl, payPath = '/pay', getQRDataUrl } = options;
+  const paymentLink = buildPaymentLink(stealthAddress, amount, baseUrl, payPath);
+  const result: PaymentRequestResult = { stealthAddress, paymentLink };
+  if (getQRDataUrl) {
+    result.qrDataUrl = getQRDataUrl(stealthAddress, amount?.trim());
   }
-  const path = payPath.startsWith('/') ? payPath : `/${payPath}`;
-  const paymentLink = `${baseUrl.replace(/\/$/, '')}${path}?${params.toString()}`;
-
-  const qrData: StealthAddressQRData = {
-    stealthAddress,
-    amount: amount?.trim(),
-    chainId: 80002,
-  };
-  const qrDataUrl = generateStealthAddressQR(qrData);
-
-  return {
-    stealthAddress,
-    paymentLink,
-    qrDataUrl,
-  };
+  return result;
 }
 
 /**

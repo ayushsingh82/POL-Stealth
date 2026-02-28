@@ -10,52 +10,20 @@ export { claimFromStealthAddress } from './core/ClaimManager';
 export { saveSentMemo, getSentMemos, getSentMemoByTxHash, clearSentMemos, DEFAULT_STORAGE_KEY } from './core/MemoStorage';
 
 export type { PaymentRequestOptions, PaymentRequestResult } from './core/PaymentRequest';
-export type { ClaimSigner, ClaimResult } from './core/ClaimManager';
+export type { ClaimSigner, ClaimResult, ClaimImplementation } from './core/ClaimManager';
 export type { SentMemoEntry, MemoStorageAdapter } from './core/MemoStorage';
 
 export * from './types';
 export * from './utils/address';
 export * from './utils/amount';
 
-// Export new services (these will be available when imported from main app)
-export type {
-  StealthPayment,
-  ScanningConfig,
-  ScanResult
-} from '../../src/services/StealthPaymentScanner';
-
-export type {
-  PaymentHistoryEntry,
-  PaymentHistoryFilter
-} from '../../src/services/PaymentHistoryManager';
-
-export type {
-  WebhookConfig,
-  WebhookPayload
-} from '../../src/services/WebhookNotifier';
-
-export type {
-  TeamMemberStealthKeys,
-  TeamStealthAddress,
-  TeamStealthAddressPoolConfig
-} from '../../src/services/TeamStealthAddressPool';
-
-export type {
-  EncryptedMetadata,
-  TransactionMemo
-} from '../../src/utils/metadataEncryption';
-
-export { encryptMetadata, decryptMetadata } from '../../src/utils/metadataEncryption';
-
-export type {
-  QRCodeOptions,
-  StealthAddressQRData
-} from '../../src/utils/qrCodeGenerator';
+// Types for StealthPaymentScanner, PaymentHistoryManager, WebhookNotifier,
+// TeamStealthAddressPool, metadataEncryption, qrCodeGenerator: import from the main app when needed.
 
 import { TeamManager } from './core/TeamManager';
 import { TransactionManager } from './core/TransactionManager';
 import { buildPaymentRequest, buildPaymentLink, parsePaymentRequestUrl } from './core/PaymentRequest';
-import { claimFromStealthAddress } from './core/ClaimManager';
+import { claimFromStealthAddress as claimFromStealthAddressFn } from './core/ClaimManager';
 import { saveSentMemo, getSentMemos, getSentMemoByTxHash, clearSentMemos } from './core/MemoStorage';
 import { SDKConfig } from './types';
 
@@ -101,7 +69,7 @@ export class POLStealthSDK {
     baseUrl?: string;
     payPath?: string;
   }) {
-    const baseUrl = options.baseUrl ?? this.config.baseUrl ?? (typeof typeof window !== 'undefined' ? (window as unknown as { location?: { origin?: string } }).location?.origin : '') ?? '';
+    const baseUrl = options.baseUrl ?? this.config.baseUrl ?? '';
     return buildPaymentRequest({
       stealthAddress: options.stealthAddress,
       amount: options.amount,
@@ -121,7 +89,7 @@ export class POLStealthSDK {
    * Claim POL from a stealth address to the user's wallet (requires signer with signMessage).
    */
   async claimFromStealthAddress(signer: { signMessage: (msg: string) => Promise<string> }, stealthAddress: `0x${string}`) {
-    return claimFromStealthAddress(signer, stealthAddress);
+    return claimFromStealthAddressFn(signer, stealthAddress);
   }
 
   /**

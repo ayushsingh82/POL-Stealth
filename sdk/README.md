@@ -56,6 +56,9 @@ const batchResult = await sdk.transactionManager.sendBatchTransactions({
 
 - **Team Management**: Add, remove, and manage team members with role-based access
 - **Transaction Handling**: Send single or batch transactions
+- **Request Payment**: Build shareable payment links and QR (receiver-initiated flow)
+- **Claim**: Claim POL from a stealth address to your wallet (with signer)
+- **Private Memo**: Save/retrieve sent memos; encrypt/decrypt with `encryptMetadata` / `decryptMetadata`
 - **Address Utilities**: Format and validate Ethereum addresses
 - **Amount Utilities**: Convert between wei and ether, format amounts
 
@@ -76,6 +79,27 @@ const batchResult = await sdk.transactionManager.sendBatchTransactions({
 - `sendTransaction(config)`: Send a single transaction
 - `sendBatchTransactions(config)`: Send batch transactions
 - `calculateBatchTotal(amount, count)`: Calculate total for batch
+
+### Request Payment (receiver-initiated)
+
+- `buildPaymentRequest({ stealthAddress, amount?, baseUrl, payPath? })`: Returns `{ stealthAddress, paymentLink, qrDataUrl }` for sharing.
+- `buildPaymentLink(stealthAddress, amount?, baseUrl, payPath?)`: Build only the pay page URL.
+- `parsePaymentRequestUrl(searchOrUrl)`: Parse `to` and `amount` from a /pay URL or query string.
+- **POLStealthSDK**: `sdk.buildPaymentRequest(options)`, `sdk.parsePaymentRequestUrl(searchOrUrl)`.
+
+### Claim
+
+- `claimFromStealthAddress(signer, stealthAddress)`: Run claim flow (signer must have `signMessage`). Returns `{ success, canClaim, error? }`.
+- **POLStealthSDK**: `sdk.claimFromStealthAddress(signer, stealthAddress)`.
+
+### Private Memo
+
+- `saveSentMemo(entry, storageKey?, storage?)`: Save a sent memo (txHash, to, amount, memo).
+- `getSentMemos(storageKey?, storage?, limit?)`: Get all sent memos (optional limit for newest N).
+- `getSentMemoByTxHash(txHash, storageKey?, storage?)`: Get memo for one tx.
+- `clearSentMemos(storageKey?, storage?)`: Clear stored memos.
+- `encryptMetadata(message, recipientViewingPublicKey)` / `decryptMetadata(encrypted, recipientViewingPrivateKey)`: ECIES encrypt/decrypt (from app utils).
+- **POLStealthSDK**: `sdk.saveSentMemo(entry)`, `sdk.getSentMemos(limit?)`, `sdk.getSentMemoByTxHash(txHash)`, `sdk.clearSentMemos()`.
 
 ### Utilities
 

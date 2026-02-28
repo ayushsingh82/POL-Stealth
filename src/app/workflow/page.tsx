@@ -137,8 +137,7 @@ export default function WorkflowPage() {
       const base = typeof window !== 'undefined' ? window.location.origin : '';
       const params = new URLSearchParams({ to: addr });
       if (requestAmount.trim() && !isNaN(parseFloat(requestAmount))) params.set('amount', requestAmount.trim());
-      const link = `${base}/pay?${params.toString()}`;
-      setPaymentLink(link);
+      setPaymentLink(`${base}/pay?${params.toString()}`);
       try {
         const { generateStealthAddressQR } = await import('../../utils/qrCodeGenerator');
         setRequestQrDataUrl(generateStealthAddressQR({ stealthAddress: addr as `0x${string}`, amount: requestAmount.trim() || undefined, chainId: 80002 }));

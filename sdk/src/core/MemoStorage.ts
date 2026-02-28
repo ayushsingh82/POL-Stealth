@@ -18,9 +18,16 @@ export interface MemoStorageAdapter {
   setItem(key: string, value: string): void;
 }
 
-const defaultAdapter: MemoStorageAdapter = typeof localStorage !== 'undefined'
-  ? localStorage
-  : { getItem: () => null, setItem: () => {} };
+function getDefaultAdapter(): MemoStorageAdapter {
+  if (typeof globalThis !== 'undefined') {
+    const g = globalThis as unknown as { localStorage?: MemoStorageAdapter };
+    if (g.localStorage && typeof g.localStorage.getItem === 'function' && typeof g.localStorage.setItem === 'function') {
+      return g.localStorage;
+    }
+  }
+  return { getItem: () => null, setItem: () => {} };
+}
+const defaultAdapter = getDefaultAdapter();
 
 /**
  * Save a sent memo (call after a successful transfer).

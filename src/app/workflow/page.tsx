@@ -3,18 +3,21 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount, useWalletClient } from 'wagmi';
+import { useAccount, useWalletClient, useSignMessage } from 'wagmi';
 import { parseEther, isAddress } from 'viem';
+import { claimFromStealthAddress } from '../../helper/fluid';
 
 type SendTab = 'generate' | 'transfer';
-type SideOption = 'send' | 'scan';
+type SideOption = 'send' | 'scan' | 'request';
 
-// Demo incoming POL-only transfers when connected (replace with real scanner when integrated)
+// Demo incoming POL-only transfers when connected (stealthAddress = address that received funds, for claim)
 const DEMO_INCOMING_POL = [
-  { from: '0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b2', amount: '0.5', when: '2 hours ago', txHash: '0xabc...' },
-  { from: '0x809cccfc6a780d68d136b52dced63ed1f14dad62', amount: '1.0', when: '1 day ago', txHash: '0xdef...' },
-  { from: '0x3a1f5b8c9d4e2f6a7b9c0d1e2f3a4b5c6d7e8f9', amount: '1.2', when: '3 days ago', txHash: '0x123...' },
+  { from: '0x742d35Cc6634C0532925a3b8D4C9db96C4b4d8b2', amount: '0.5', when: '2 hours ago', txHash: '0xabc...', stealthAddress: '0xc88b88b9e82b1874cc018b4bab6b0d86689b092e' as `0x${string}` },
+  { from: '0x809cccfc6a780d68d136b52dced63ed1f14dad62', amount: '1.0', when: '1 day ago', txHash: '0xdef...', stealthAddress: '0xa1b2c3d4e5f6789012345678901234567890abcd' as `0x${string}` },
+  { from: '0x3a1f5b8c9d4e2f6a7b9c0d1e2f3a4b5c6d7e8f9', amount: '1.2', when: '3 days ago', txHash: '0x123...', stealthAddress: '0x9876543210fedcba098765432109876543210fed' as `0x${string}` },
 ];
+
+const SENT_MEMOS_KEY = 'pol-stealth-sent-memos';
 
 export default function WorkflowPage() {
   const [sideOption, setSideOption] = useState<SideOption>('send');
@@ -26,9 +29,21 @@ export default function WorkflowPage() {
   const [isSending, setIsSending] = useState(false);
   const [txStatus, setTxStatus] = useState('');
   const [txHash, setTxHash] = useState('');
+  const [memo, setMemo] = useState('');
+  const [lastSentMemo, setLastSentMemo] = useState<string | null>(null);
+  // Request flow
+  const [requestAmount, setRequestAmount] = useState('');
+  const [requestStealthAddress, setRequestStealthAddress] = useState('');
+  const [isGeneratingRequest, setIsGeneratingRequest] = useState(false);
+  const [paymentLink, setPaymentLink] = useState('');
+  const [requestQrDataUrl, setRequestQrDataUrl] = useState('');
+  // Claim
+  const [claimingId, setClaimingId] = useState<number | null>(null);
+  const [claimStatus, setClaimStatus] = useState('');
 
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
+  const { signMessageAsync } = useSignMessage();
 
   const generateStealthAddress = async () => {
     if (!receiverAddress.trim()) {
@@ -91,10 +106,63 @@ export default function WorkflowPage() {
       });
       setTxHash(hash);
       setTxStatus(`Transfer sent. Hash: ${hash}`);
+      if (memo.trim()) {
+        try {
+          const stored = JSON.parse(localStorage.getItem(SENT_MEMOS_KEY) || '[]');
+          stored.push({ txHash: hash, to: stealthAddress, amount: amt, memo: memo.trim(), at: Date.now() });
+          localStorage.setItem(SENT_MEMOS_KEY, JSON.stringify(stored));
+          setLastSentMemo(memo.trim());
+          setMemo('');
+        } catch (_) {}
+      }
     } catch (err) {
       setTxStatus(`Transfer failed: ${(err as Error).message}`);
     } finally {
       setIsSending(false);
+    }
+  };
+
+  const generatePaymentRequest = async () => {
+    setIsGeneratingRequest(true);
+    setPaymentLink('');
+    setRequestQrDataUrl('');
+    try {
+      await new Promise((r) => setTimeout(r, 1200));
+      const chars = '0123456789abcdef';
+      let addr = '0x';
+      for (let i = 0; i < 40; i++) addr += chars[Math.floor(Math.random() * chars.length)];
+      const prefixes = ['1a', '2b', '3c', '4d', '5e', '6f', '7a', '8b', '9c', '0d'];
+      addr = addr.slice(0, 4) + prefixes[Math.floor(Math.random() * prefixes.length)] + addr.slice(6);
+      setRequestStealthAddress(addr);
+      const base = typeof window !== 'undefined' ? window.location.origin : '';
+      const params = new URLSearchParams({ to: addr });
+      if (requestAmount.trim() && !isNaN(parseFloat(requestAmount))) params.set('amount', requestAmount.trim());
+      const link = `${base}/pay?${params.toString()}`;
+      setPaymentLink(link);
+      try {
+        const { generateStealthAddressQR } = await import('../../utils/qrCodeGenerator');
+        setRequestQrDataUrl(generateStealthAddressQR({ stealthAddress: addr as `0x${string}`, amount: requestAmount.trim() || undefined, chainId: 80002 }));
+      } catch (_) {}
+    } finally {
+      setIsGeneratingRequest(false);
+    }
+  };
+
+  const handleClaim = async (index: number, stealthAddr: `0x${string}`) => {
+    if (!isConnected || !signMessageAsync) {
+      setClaimStatus('Connect wallet to claim');
+      return;
+    }
+    setClaimingId(index);
+    setClaimStatus('');
+    try {
+      const signer = { signMessage: async (msg: string) => await signMessageAsync({ message: msg }) };
+      await claimFromStealthAddress(signer, stealthAddr);
+      setClaimStatus('Claim flow completed. In production, POL would move to your wallet.');
+    } catch (e) {
+      setClaimStatus(`Claim failed: ${(e as Error).message}`);
+    } finally {
+      setClaimingId(null);
     }
   };
 
@@ -134,6 +202,15 @@ export default function WorkflowPage() {
               }`}
             >
               <span>🔍</span> Scan
+            </button>
+            <button
+              type="button"
+              onClick={() => setSideOption('request')}
+              className={`py-3 px-4 rounded-xl border-2 border-black text-sm font-bold transition text-left flex items-center gap-2 ${
+                sideOption === 'request' ? 'bg-black text-white' : 'bg-white text-black hover:bg-[#FCD119]'
+              }`}
+            >
+              <span>📩</span> Request
             </button>
           </div>
 

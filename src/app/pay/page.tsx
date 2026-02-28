@@ -25,7 +25,7 @@ export default function PayPage() {
     if (amountParam && !isNaN(parseFloat(amountParam))) setAmount(amountParam);
   }, []);
 
-  const handlePay = async (e: React.FormEvent) => {
+  const handlePay = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!isConnected || !walletClient || !address) {
       setTxStatus('Connect your wallet first');
@@ -121,3 +121,5 @@ export default function PayPage() {
     </div>
   );
 }
+
+

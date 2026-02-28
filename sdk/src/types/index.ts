@@ -44,5 +44,7 @@ export interface BatchTransactionResult {
 export interface SDKConfig {
   chainId?: number;
   rpcUrl?: string;
+  /** Base URL for payment request links (e.g. app origin) */
+  baseUrl?: string;
 }
 

@@ -310,6 +310,20 @@ export default function WorkflowPage() {
                         disabled={!stealthAddress || isSending || !isConnected}
                       />
                     </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-black mb-2">Private memo <span className="text-gray-500 font-normal">(optional, only you can see it)</span></label>
+                      <textarea
+                        placeholder="e.g. Payment for invoice #123"
+                        value={memo}
+                        onChange={(e) => setMemo(e.target.value)}
+                        rows={2}
+                        className="w-full p-3 border-2 border-black rounded-xl bg-white text-black text-sm focus:ring-2 focus:ring-[#FCD119] focus:border-[#FCD119] outline-none resize-none"
+                        disabled={isSending}
+                      />
+                    </div>
+                    {lastSentMemo && (
+                      <p className="text-xs text-gray-600 bg-gray-100 p-2 rounded">Last sent memo: {lastSentMemo}</p>
+                    )}
                     <button
                       type="submit"
                       disabled={!stealthAddress || !amount.trim() || isSending || !isConnected}
@@ -377,19 +391,87 @@ export default function WorkflowPage() {
                           From: {p.from.slice(0, 10)}…{p.from.slice(-8)}
                         </div>
                         <div className="text-xs text-gray-500 mt-1">{p.when}</div>
-                        <a
-                          href={`https://amoy.polygonscan.com/tx/${p.txHash}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-blue-600 hover:underline mt-1 inline-block"
-                        >
-                          View on Explorer →
-                        </a>
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          <a
+                            href={`https://amoy.polygonscan.com/tx/${p.txHash}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:underline"
+                          >
+                            View on Explorer →
+                          </a>
+                          <button
+                            type="button"
+                            onClick={() => handleClaim(i, p.stealthAddress)}
+                            disabled={claimingId !== null}
+                            className="text-xs px-3 py-1.5 rounded-lg bg-black text-white font-semibold hover:bg-gray-800 disabled:opacity-50"
+                          >
+                            {claimingId === i ? 'Claiming…' : 'Claim to my wallet'}
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
+                  {claimStatus && <p className="text-sm text-gray-700 mt-2">{claimStatus}</p>}
                   <p className="text-xs text-gray-400 mt-3">Live data when background scanner is connected.</p>
                 </>
+              )}
+            </div>
+            )}
+
+            {sideOption === 'request' && (
+            <div className="bg-white border-2 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] rounded-2xl p-6">
+              <h2 className="text-lg font-black text-black mb-1 flex items-center gap-2">
+                <span className="text-2xl">📩</span> Request payment
+              </h2>
+              <p className="text-sm text-gray-600 mb-4">Get a link or QR so someone can pay you POL to a stealth address.</p>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-black mb-2">Amount (POL, optional)</label>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="0.0"
+                    value={requestAmount}
+                    onChange={(e) => setRequestAmount(e.target.value)}
+                    className="w-full p-3 border-2 border-black rounded-xl bg-white text-black font-semibold"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={generatePaymentRequest}
+                  disabled={isGeneratingRequest}
+                  className="w-full py-3 px-6 rounded-xl border-2 border-black font-bold bg-[#FCD119] text-black hover:bg-black hover:text-[#FCD119] transition disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {isGeneratingRequest ? (
+                    <><span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" /> Generating…</>
+                  ) : (
+                    'Generate payment request'
+                  )}
+                </button>
+              </div>
+              {paymentLink && (
+                <div className="mt-6 p-4 bg-[#FCD119]/10 border-2 border-[#FCD119] rounded-xl space-y-3">
+                  <p className="text-xs font-semibold text-gray-700">Share this link or QR</p>
+                  <p className="text-sm font-mono text-black break-all">{paymentLink}</p>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => navigator.clipboard.writeText(paymentLink)}
+                      className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800 font-semibold"
+                    >
+                      Copy link
+                    </button>
+                    <a href={paymentLink} target="_blank" rel="noopener noreferrer" className="px-4 py-2 text-sm bg-[#FCD119] text-black border-2 border-black rounded-lg font-semibold hover:bg-black hover:text-[#FCD119]">
+                      Open pay page →
+                    </a>
+                  </div>
+                  {requestQrDataUrl && (
+                    <div className="mt-3 flex justify-center">
+                      <img src={requestQrDataUrl} alt="QR" className="w-40 h-40 border-2 border-black rounded-lg" />
+                    </div>
+                  )}
+                </div>
               )}
             </div>
             )}
